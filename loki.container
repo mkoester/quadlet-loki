@@ -1,0 +1,39 @@
+[Unit]
+Description=Grafana Loki log aggregation
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/grafana/loki:latest
+AutoUpdate=registry
+
+# The image runs as loki (uid=10001, gid=10001)
+UserNS=keep-id:uid=10001,gid=10001
+User=10001
+Group=10001
+
+# Environment variables
+EnvironmentFile=%h/.config/containers/systemd/loki.env
+EnvironmentFile=%h/.config/containers/systemd/loki.override.env
+
+# Config directory (contains loki.yaml) — read-only
+Volume=%h/config:/etc/loki:Z,ro
+
+# Persistent data volume — chunks and index
+Volume=%h/data:/loki:Z
+
+# Port mapping — bind to localhost only, reverse proxy handles TLS
+PublishPort=127.0.0.1:3100:3100
+
+# Health check
+HealthCmd=wget -qO- http://localhost:3100/ready || exit 1
+HealthInterval=30s
+HealthTimeout=10s
+HealthRetries=3
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=default.target

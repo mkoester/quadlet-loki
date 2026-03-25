@@ -1,0 +1,7 @@
+[Unit]
+Description=Loki backup
+
+[Service]
+Type=oneshot
+# Sync the entire data directory (chunks and index) to the backup location
+ExecStart=/usr/bin/rsync -a --delete %h/data/ /var/backups/loki/
