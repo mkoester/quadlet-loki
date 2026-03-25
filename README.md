@@ -11,7 +11,7 @@ This project was created with the help of Claude Code and https://github.com/mko
 | `loki.container` | Quadlet unit file |
 | `loki.env` | Default environment variables |
 | `loki.override.env.template` | Template for local overrides |
-| `loki.yaml` | Loki configuration (single-binary, filesystem storage) |
+| `loki.yaml.template` | Loki configuration template (single-binary, filesystem storage) |
 | `loki-backup.service` | Systemd service: rsync data directory to backup location |
 | `loki-backup.timer` | Systemd timer: triggers the backup daily |
 
@@ -37,8 +37,8 @@ sudo -u loki mkdir -p ~loki/.config/containers/systemd
 sudo -u loki mkdir -p ~loki/config
 sudo -u loki mkdir -p ~loki/data
 
-# 5. Copy the Loki config into the config directory and adjust if needed
-sudo -u loki cp $REPO/loki.yaml ~loki/config/loki.yaml
+# 5. Copy the Loki config template into the config directory and adjust if needed
+sudo -u loki cp $REPO/loki.yaml.template ~loki/config/local-config.yaml
 
 # 6. Create .override.env from template
 sudo -u loki cp $REPO/loki.override.env.template $REPO/loki.override.env
@@ -77,7 +77,7 @@ sudo -u loki XDG_RUNTIME_DIR=/run/user/$(id -u loki) systemctl --user restart lo
 
 ### Loki configuration
 
-The file `~loki/config/loki.yaml` is mounted into the container at `/etc/loki/`. It is copied from `loki.yaml` in this repo during setup and is **not** managed by symlink, so you can adjust it per host without affecting the repo.
+The file `~loki/config/local-config.yaml` is mounted into the container at `/etc/loki/`. It is copied from `loki.yaml.template` in this repo during setup and is **not** managed by symlink, so you can adjust it per host without affecting the repo.
 
 The default config uses single-binary mode with local filesystem storage — suitable for a single-node setup.
 
