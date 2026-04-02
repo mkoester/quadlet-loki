@@ -25,12 +25,6 @@ Volume=%h/data:/loki:Z
 # Port mapping — bind to localhost only, reverse proxy handles TLS
 PublishPort=127.0.0.1:3100:3100
 
-# Health check
-HealthCmd=wget -qO- http://localhost:3100/ready || exit 1
-HealthInterval=30s
-HealthTimeout=10s
-HealthRetries=3
-
 [Service]
 Restart=always
 TimeoutStartSec=900
