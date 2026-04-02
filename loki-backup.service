@@ -4,4 +4,4 @@ Description=Loki backup
 [Service]
 Type=oneshot
 # Sync the entire data directory (chunks and index) to the backup location
-ExecStart=/usr/bin/rsync -a --delete --chmod=Dg+x,Fg+r %h/data/ /var/backups/loki/
+ExecStart=/usr/bin/rsync -a --delete --chmod=Dg+rx,Fg+r %h/data/ /var/backups/loki/
