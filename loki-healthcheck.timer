@@ -1,0 +1,9 @@
+[Unit]
+Description=Periodic Loki health check
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=90s
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=Loki health check
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/bin/curl -sf http://127.0.0.1:3100/ready || (echo "Loki health check failed, restarting loki.service" >&2; systemctl --user restart loki.service)'

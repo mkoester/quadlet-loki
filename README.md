@@ -14,6 +14,8 @@ This project was created with the help of Claude Code and https://github.com/mko
 | `loki.yaml.template` | Loki configuration template (single-binary, filesystem storage) |
 | `loki-backup.service` | Systemd service: rsync data directory to backup location |
 | `loki-backup.timer` | Systemd timer: triggers the backup daily |
+| `loki-healthcheck.service` | Systemd service: checks `/ready` endpoint, restarts Loki if unhealthy |
+| `loki-healthcheck.timer` | Systemd timer: triggers the health check every 30 seconds |
 
 ## Setup
 
@@ -123,6 +125,21 @@ sudo -u loki XDG_RUNTIME_DIR=/run/user/$(id -u loki) systemctl --user enable --n
 
 ```sh
 rsync -az backupuser@loki-host:/var/backups/loki/ /path/to/local/backup/loki/
+```
+
+## Health check
+
+The Loki container image is distroless (no shell or HTTP tools), so Podman's built-in `HealthCmd` cannot run inside the container. Instead, a systemd timer checks the `/ready` endpoint from the host every 90 seconds and restarts Loki if it fails.
+
+```sh
+# 1. Symlink the health check service and timer from the repo
+sudo -u loki mkdir -p ~loki/.config/systemd/user
+sudo -u loki ln -s $REPO/loki-healthcheck.service ~loki/.config/systemd/user/loki-healthcheck.service
+sudo -u loki ln -s $REPO/loki-healthcheck.timer ~loki/.config/systemd/user/loki-healthcheck.timer
+
+# 2. Enable and start the timer
+sudo -u loki XDG_RUNTIME_DIR=/run/user/$(id -u loki) systemctl --user daemon-reload
+sudo -u loki XDG_RUNTIME_DIR=/run/user/$(id -u loki) systemctl --user enable --now loki-healthcheck.timer
 ```
 
 ## Notes
