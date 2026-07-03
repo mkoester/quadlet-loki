@@ -109,7 +109,7 @@ The backup service uses `rsync` to copy the entire data directory to the backup 
 # 1. Create backup staging directory (owned by loki, readable by backup-readers group)
 sudo mkdir -p /var/backups/loki
 sudo chown loki:backup-readers /var/backups/loki
-sudo chmod 750 /var/backups/loki
+sudo chmod 2750 /var/backups/loki
 
 # 2. Symlink the backup service and timer from the repo
 sudo -u loki mkdir -p ~loki/.config/systemd/user
